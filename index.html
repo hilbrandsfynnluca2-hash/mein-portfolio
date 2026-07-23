@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dienstleistungen & Anfragen</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: #1e293b;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 550px;
+            border: 1px solid #334155;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #38bdf8;
+            text-align: center;
+        }
+
+        p.subtitle {
+            font-size: 14px;
+            color: #94a3b8;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #cbd5e1;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 18px;
+            border-radius: 6px;
+            border: 1px solid #475569;
+            background-color: #0f172a;
+            color: #ffffff;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: #38bdf8;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: #5865F2;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        button:hover {
+            background-color: #4752C4;
+        }
+
+        button:active {
+            transform: scale(0.99);
+        }
+
+        .status-msg {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 14px;
+            display: none;
+        }
+
+        .status-success {
+            background-color: #15803d;
+            color: #dcfce7;
+        }
+
+        .status-error {
+            background-color: #b91c1c;
+            color: #fee2e2;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Angebot anfordern 🚀</h1>
+    <p class="subtitle">Fülle das Formular aus, um ein unverbindliches Angebot zu erhalten.</p>
+
+    <form id="requestForm">
+        <label for="username">Dein Name / Discord-Tag:</label>
+        <input type="text" id="username" placeholder="z. B. Max oder Max#1234" required>
+
+        <label for="contact">Wie können wir dich erreichen? (E-Mail / Discord):</label>
+        <input type="text" id="contact" placeholder="z. B. max@example.com oder Discord-Name" required>
+
+        <label for="service">Welche Dienstleistung suchst du?</label>
+        <select id="service">
+            <option value="Discord Server Setup">Discord Server Einrichtung</option>
+            <option value="Custom Discord Bot">Custom Discord Bot</option>
+            <option value="Webseiten Erstellung">Webseiten Erstellung</option>
+            <option value="Komplettpaket (Server + Bot + Web)">Komplettpaket</option>
+            <option value="Sonstiges / Beratung">Sonstiges / Beratung</option>
+        </select>
+
+        <label for="message">Projektbeschreibung / Deine Wünsche:</label>
+        <textarea id="message" placeholder="Beschreibe kurz, was du brauchst (z.B. Thema des Servers, Funktionen des Bots...)" required></textarea>
+
+        <button type="submit" id="submitBtn">Anfrage Absenden ✨</button>
+    </form>
+
+    <div id="statusMsg" class="status-msg"></div>
+</div>
+
+<script>
+document.getElementById('requestForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const submitBtn = document.getElementById('submitBtn');
+    const statusMsg = document.getElementById('statusMsg');
+
+    // ============================================================
+    // ⚠️ HIER DEINE DISCORD WEBHOOK URL ZWISCHEN DIE ANFÜHRUNGSZEICHEN EINFÜGEN:
+    const webhookURL = "https://discord.com/api/webhooks/1529833666518192239/36U26WwdCnlzFrBd5_DoQFHtkfrVFQJF6Lxv2jiMP2Th8iFZ8sBsQRfx1EtfNZV-NeST";
+    // ============================================================
+
+    if (webhookURL === "DEINE_WEBHOOK_URL_HIER_EINFUEGEN" || webhookURL === "") {
+        alert("Fehler: Du musst zuerst deine Discord Webhook URL im Code einfügen!");
+        return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.innerText = "Wird gesendet...";
+
+    const username = document.getElementById('username').value;
+    const contact = document.getElementById('contact').value;
+    const service = document.getElementById('service').value;
+    const message = document.getElementById('message').value;
+
+    const payload = {
+        username: "Website Benachrichtigung",
+        embeds: [{
+            title: "📥 Neue Anfragen über die Website!",
+            color: 3826936, // Blau/Türkis
+            fields: [
+                { name: "👤 Kunde / Name", value: username, inline: true },
+                { name: "📬 Kontaktmöglichkeit", value: contact, inline: true },
+                { name: "🛠️ Gewählter Service", value: service, inline: false },
+                { name: "📝 Projektbeschreibung", value: message, inline: false }
+            ],
+            footer: { text: "Anfrage-System • Website" },
+            timestamp: new Date()
+        }]
+    };
+
+    fetch(webhookURL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    })
+    .then(response => {
+        if (response.ok) {
+            statusMsg.className = "status-msg status-success";
+            statusMsg.innerText = "✅ Anfrage erfolgreich abgesendet! Wir melden uns in Kürze.";
+            statusMsg.style.display = "block";
+            document.getElementById('requestForm').reset();
+        } else {
+            throw new Error('Server Antwort war nicht OK');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        statusMsg.className = "status-msg status-error";
+        statusMsg.innerText = "❌ Fehler beim Senden. Bitte versuche es später erneut.";
+        statusMsg.style.display = "block";
+    })
+    .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.innerText = "Anfrage Absenden ✨";
+    });
+});
+</script>
+
+</body>
+</html>
